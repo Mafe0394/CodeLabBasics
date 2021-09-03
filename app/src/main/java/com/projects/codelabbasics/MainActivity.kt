@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -32,9 +35,18 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String) {
+    var isSelected by remember {
+        mutableStateOf(false)
+    }
+    val backgroundColor by animateColorAsState(
+        targetValue = if(isSelected) MaterialTheme.colors.secondary else MaterialTheme.colors.surface
+    )
     Text(
         text = "Hello $name!",
-        modifier = Modifier.padding(24.dp)
+        modifier = Modifier
+            .padding(24.dp)
+            .clickable { isSelected = !isSelected }
+            .background(backgroundColor)
     )
 }
 
@@ -64,7 +76,7 @@ fun NameList(names:List<String>,modifier:Modifier){
 @Composable
 fun MyApp(content: @Composable () -> Unit) {
     CodeLabBasicsTheme {
-        Surface(color = Color.Yellow) {
+        Surface(color = MaterialTheme.colors.surface) {
             content()
         }
     }
@@ -72,15 +84,6 @@ fun MyApp(content: @Composable () -> Unit) {
 
 @Composable
 fun Counter(count: Int, updateCount: (Int) -> Unit) {
-//    var count by remember {
-//        mutableStateOf(1)
-//    }
-//    val count=remember{ mutableStateOf(0)}
-//    Button(onClick = {
-//        count.value++
-//    }) {
-//        Text("Clicked ${count.value} times")
-//    }
     Button(onClick = {
         updateCount(count + 1)
     },
